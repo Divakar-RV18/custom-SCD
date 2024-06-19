@@ -1,0 +1,17 @@
+<check_type:"Unix">
+<custom_item>
+  type           : EXEC
+  description    : Check NetScaler HA status
+  info           : "Checks if high availability (HA) is enabled and configured for failover on NetScaler"
+  cmd            : show ha node
+  cmd_exec       : show ha node
+</custom_item>
+
+<custom_item>
+  type           : EXEC
+  description    : Check NetScaler HTTPS configuration
+  info           : "Checks if secure HTTPS (SSL/TLS) is configured properly on NetScaler"
+  cmd            : show ssl parameters
+  cmd_exec       : show ssl parameters
+</custom_item>
+</check_type>
