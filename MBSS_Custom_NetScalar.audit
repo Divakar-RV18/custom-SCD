@@ -1,0 +1,224 @@
+configure syslog configuration for LSN
+
+<check_type:custom_item>
+  <check_type:info>
+    <check_type:name>Check NetScaler syslog configuration for LSN</check_type:name>
+    <check_type:description>Verify syslog configuration for LSN in NetScaler appliance</check_type:description>
+    <check_type:reference>Custom Plugin</check_type:reference>
+  </check_type:info>
+  <check_type:script><![CDATA[
+    COMMAND_OUTPUT=$(show ns syslogParams)
+    
+    # Check if LSN related configuration is present in the output
+    if echo "$COMMAND_OUTPUT" | grep -q "LSN"; then
+      result="LSN syslog configuration found"
+      status="PASSED"
+    else
+      result="LSN syslog configuration not found"
+      status="FAILED"
+    fi
+
+    # Output the result
+    echo "<check_type:item>"
+    echo "  <check_type:name>NetScaler syslog LSN configuration</check_type:name>"
+    echo "  <check_type:status>$status</check_type:status>"
+    echo "  <check_type:severity>Medium</check_type:severity>"
+    echo "  <check_type:output>$result</check_type:output>"
+    echo "</check_type:item>"
+  ]]></check_type:script>
+</check_type:custom_item>
+
+TCP SYN idle tinout is configured
+
+<check_type:custom_item>
+  <check_type:info>
+    <check_type:name>Check NetScaler TCP SYN idle timeout configuration</check_type:name>
+    <check_type:description>Verify TCP SYN idle timeout configuration on NetScaler</check_type:description>
+    <check_type:reference>Custom Plugin</check_type:reference>
+  </check_type:info>
+  <check_type:script><![CDATA[
+    COMMAND_OUTPUT=$(show ns tcpProfile)
+    
+    # Check if SYN Idle Timeout configuration is present in the output
+    if echo "$COMMAND_OUTPUT" | grep -q "SYN Idle Timeout"; then
+      timeout_value=$(echo "$COMMAND_OUTPUT" | grep "SYN Idle Timeout" | awk '{print $NF}')
+      result="SYN Idle Timeout is configured with value: $timeout_value"
+      status="PASSED"
+    else
+      result="SYN Idle Timeout is not configured"
+      status="FAILED"
+    fi
+
+    # Output the result
+    echo "<check_type:item>"
+    echo "  <check_type:name>TCP SYN Idle Timeout Configuration</check_type:name>"
+    echo "  <check_type:status>$status</check_type:status>"
+    echo "  <check_type:severity>Medium</check_type:severity>"
+    echo "  <check_type:output>$result</check_type:output>"
+    echo "</check_type:item>"
+  ]]></check_type:script>
+</check_type:custom_item>
+
+enable client certification authentication
+
+<check_type:custom_item>
+  <check_type:info>
+    <check_type:name>Check NetScaler Client Certificate Authentication</check_type:name>
+    <check_type:description>Verify if client certificate authentication is enabled on NetScaler</check_type:description>
+    <check_type:reference>Custom Plugin</check_type:reference>
+  </check_type:info>
+  <check_type:script><![CDATA[
+    COMMAND_OUTPUT=$(show authentication vserver <vserver_name>)
+    
+    # Check if client certificate authentication is enabled in the output
+    if echo "$COMMAND_OUTPUT" | grep -q "Client Cert":ENABLED; then
+      result="Client certificate authentication is enabled"
+      status="PASSED"
+    else
+      result="Client certificate authentication is not enabled"
+      status="FAILED"
+    fi
+
+    # Output the result
+    echo "<check_type:item>"
+    echo "  <check_type:name>Client Certificate Authentication</check_type:name>"
+    echo "  <check_type:status>$status</check_type:status>"
+    echo "  <check_type:severity>Medium</check_type:severity>"
+    echo "  <check_type:output>$result</check_type:output>"
+    echo "</check_type:item>"
+  ]]></check_type:script>
+</check_type:custom_item>
+
+configure rate limiting for netscalar gateway
+
+<check_type:custom_item>
+  <check_type:info>
+    <check_type:name>Check NetScaler Gateway Rate Limiting Configuration</check_type:name>
+    <check_type:description>Verify the rate limiting configuration on NetScaler Gateway</check_type:description>
+    <check_type:reference>Custom Plugin</check_type:reference>
+  </check_type:info>
+  <check_type:script><![CDATA[
+    COMMAND_OUTPUT=$(show ns rateLimiting)
+    
+    # Check if rate limiting configuration is present in the output
+    if [ -n "$COMMAND_OUTPUT" ]; then
+      result="Rate limiting configuration is present"
+      status="PASSED"
+    else
+      result="Rate limiting configuration is not present"
+      status="FAILED"
+    fi
+
+    # Output the result
+    echo "<check_type:item>"
+    echo "  <check_type:name>Rate Limiting Configuration</check_type:name>"
+    echo "  <check_type:status>$status</check_type:status>"
+    echo "  <check_type:severity>Medium</check_type:severity>"
+    echo "  <check_type:output>$result</check_type:output>"
+    echo "</check_type:item>"
+  ]]></check_type:script>
+</check_type:custom_item>
+
+configure authorization
+
+<check_type:custom_item>
+  <check_type:info>
+    <check_type:name>Check NetScaler Gateway Authorization Configuration</check_type:name>
+    <check_type:description>Verify the authorization configuration on NetScaler Gateway</check_type:description>
+    <check_type:reference>Custom Plugin</check_type:reference>
+  </check_type:info>
+  <check_type:script><![CDATA[
+    COMMAND_OUTPUT=$(show aaa vserver <vserver_name>)
+    
+    # Check if authorization configuration is present in the output
+    if echo "$COMMAND_OUTPUT" | grep -q "Policy:"; then
+      result="Authorization configuration is present"
+      status="PASSED"
+    else
+      result="Authorization configuration is not present"
+      status="FAILED"
+    fi
+
+    # Output the result
+    echo "<check_type:item>"
+    echo "  <check_type:name>Authorization Configuration</check_type:name>"
+    echo "  <check_type:status>$status</check_type:status>"
+    echo "  <check_type:severity>Medium</check_type:severity>"
+    echo "  <check_type:output>$result</check_type:output>"
+    echo "</check_type:item>"
+  ]]></check_type:script>
+</check_type:custom_item>
+
+configure syslog auditing
+
+
+<check_type:custom_item>
+  <check_type:info>
+    <check_type:name>Check NetScaler Syslog Auditing Configuration</check_type:name>
+    <check_type:description>Verify the syslog auditing configuration on NetScaler</check_type:description>
+    <check_type:reference>Custom Plugin</check_type:reference>
+  </check_type:info>
+  <check_type:script><![CDATA[
+    COMMAND_OUTPUT=$(show audit syslog)
+    
+    # Check if syslog auditing configuration is present in the output
+    if [ -n "$COMMAND_OUTPUT" ]; then
+      result="Syslog auditing configuration is present"
+      status="PASSED"
+    else
+      result="Syslog auditing configuration is not present"
+      status="FAILED"
+    fi
+
+    # Output the result
+    echo "<check_type:item>"
+    echo "  <check_type:name>Syslog Auditing Configuration</check_type:name>"
+    echo "  <check_type:status>$status</check_type:status>"
+    echo "  <check_type:severity>Medium</check_type:severity>"
+    echo "  <check_type:output>$result</check_type:output>"
+    echo "</check_type:item>"
+  ]]></check_type:script>
+</check_type:custom_item>
+
+configure same site cookie attribute
+
+<check_type:custom_item>
+  <check_type:info>
+    <check_type:name>Check NetScaler SameSite Cookie Attribute Configuration</check_type:name>
+    <check_type:description>Verify the SameSite cookie attribute configuration on NetScaler</check_type:description>
+    <check_type:reference>Custom Plugin</check_type:reference>
+  </check_type:info>
+  <check_type:script><![CDATA[
+    COMMAND_OUTPUT=$(show ns httpProfile)
+    
+    # Check if SameSite cookie attribute configuration is present in the output
+    if echo "$COMMAND_OUTPUT" | grep -q "SameSite"; then
+      result="SameSite cookie attribute configuration is present"
+      status="PASSED"
+    else
+      result="SameSite cookie attribute configuration is not present"
+      status="FAILED"
+    fi
+
+    # Output the result
+    echo "<check_type:item>"
+    echo "  <check_type:name>SameSite Cookie Attribute Configuration</check_type:name>"
+    echo "  <check_type:status>$status</check_type:status>"
+    echo "  <check_type:severity>Medium</check_type:severity>"
+    echo "  <check_type:output>$result</check_type:output>"
+    echo "</check_type:item>"
+  ]]></check_type:script>
+</check_type:custom_item>
+
+
+thales luna client on ADC installed in netscalar
+
+
+<custom_item>
+  type: FILE_CONTENT_CHECK
+  description: "Check for Thales Luna Client installation"
+  info: "Checks if Thales Luna Client files are present"
+  file: "/path/to/thales/luna/client"
+  content: "Thales Luna Client"
+  expect: present
+</custom_item>
