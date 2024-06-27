@@ -1,0 +1,132 @@
+Ensure high availability is enabled and configured for failover availability
+<custom_item>
+  type        : EXEC
+  description : "Check NetScaler HA configuration"
+  info        : "Check if HA is enabled and configured for failover availability"
+  cmd         : |
+    enable
+    shell
+    cd /var/nsconfig
+    cat ha.conf
+  expect      : "ENABLED"  # Adjust this based on your HA configuration output
+</custom_item>
+
+
+
+Ensure to configure secure HTTPS
+<custom_item>
+  type        : EXEC
+  description : "Check SSL Certificates on NetScaler"
+  info        : "Verify that SSL certificates are properly configured"
+  cmd         : |
+    enable
+    shell
+    show ssl certKey
+  expect      : "^[A-Za-z0-9]{32} .* ENABLED .*"  # Adjust based on your SSL certificate naming convention
+</custom_item>
+
+<custom_item>
+  type        : EXEC
+  description : "Check SSL Profiles on NetScaler"
+  info        : "Verify that SSL profiles are configured for HTTPS"
+  cmd         : |
+    enable
+    shell
+    show ssl profile
+  expect      : ".* SSL .*"
+</custom_item>
+
+<custom_item>
+  type        : EXEC
+  description : "Check HTTPS Virtual Servers on NetScaler"
+  info        : "Verify that virtual servers are configured to handle HTTPS traffic"
+  cmd         : |
+    enable
+    shell
+    show lb vserver
+  expect      : ".* SSL .*"
+</custom_item>
+
+<custom_item>
+  type        : EXEC
+  description : "Check SSL Parameters on NetScaler"
+  info        : "Verify SSL parameters for secure configuration"
+  cmd         : |
+    enable
+    shell
+    show ssl parameters
+  expect      : ".*"
+</custom_item>
+
+
+
+Ensure clock synchronization is configured
+<custom_item>
+  type        : EXEC
+  description : "Check NTP Configuration on NetScaler"
+  info        : "Verify NTP servers are configured and synchronized"
+  cmd         : |
+    enable
+    shell
+    cat /etc/ntp.conf
+  expect      : "server [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+</custom_item>
+
+<custom_item>
+  type        : EXEC
+  description : "Check NTP Status on NetScaler"
+  info        : "Verify NTP synchronization status"
+  cmd         : |
+    enable
+    show ntp status
+  expect      : "Clock synchronized: yes"
+</custom_item>
+
+
+
+Ensure SNMP V3 is enabled, v1 and v2 are disabled
+<custom_item>
+  type        : EXEC
+  description : "Check SNMP v3 Configuration on NetScaler"
+  info        : "Verify SNMP v3 is enabled"
+  cmd         : |
+    enable
+    show snmp v3
+  expect      : ".*Enabled: Yes.*"
+</custom_item>
+
+<custom_item>
+  type        : EXEC
+  description : "Check SNMP v1 Configuration on NetScaler"
+  info        : "Verify SNMP v1 is disabled"
+  cmd         : |
+    enable
+    show snmp v1
+  expect      : ".*Enabled: No.*"
+</custom_item>
+
+<custom_item>
+  type        : EXEC
+  description : "Check SNMP v2 Configuration on NetScaler"
+  info        : "Verify SNMP v2 is disabled"
+  cmd         : |
+    enable
+    show snmp v2
+  expect      : ".*Enabled: No.*"
+</custom_item>
+
+
+Ensure SNMP trap listeners are configured
+<custom_item>
+  type        : EXEC
+  description : "Check SNMP Trap Listeners on NetScaler"
+  info        : "Verify SNMP trap receivers are configured"
+  cmd         : |
+    enable
+    show snmp trap
+  expect      : ".*Receiver: .*"
+</custom_item>
+
+
+
+

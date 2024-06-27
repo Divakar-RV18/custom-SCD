@@ -1,0 +1,117 @@
+chmod +x check_snmp.sh
+
+
+
+Ensure high availability is enabled and configured for failover availability.
+
+
+#!/bin/bash
+
+# NetScaler SSH connection details
+NETSCALER_IP="<NetScaler_IP>"
+SSH_USER="nsroot"
+SSH_KEY="/path/to/your/private_key.pem"  # Replace with the path to your SSH private key
+SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
+# SSH command to execute on NetScaler
+SSH_COMMAND="show ha node"
+
+# SSH into NetScaler and execute command
+ssh $SSH_OPTIONS -i $SSH_KEY $SSH_USER@$NETSCALER_IP "$SSH_COMMAND" | while IFS= read -r line; do
+    if [[ "$line" == *"ENABLED"* ]]; then
+        echo "High Availability is ENABLED"
+    elif [[ "$line" == *"DISABLED"* ]]; then
+        echo "High Availability is DISABLED"
+    elif [[ "$line" == *"Primary"* ]]; then
+        echo "This node is PRIMARY in the HA pair"
+    elif [[ "$line" == *"Secondary"* ]]; then
+        echo "This node is SECONDARY in the HA pair"
+    elif [[ "$line" == *"Synchronized"* ]]; then
+        echo "HA synchronization state: Synchronized"
+    elif [[ "$line" == *"Not Synchronized"* ]]; then
+        echo "HA synchronization state: Not Synchronized"
+    fi
+done
+
+
+
+
+Ensure clock synchronization is configured
+
+#!/bin/bash
+
+# SSH connection details
+NETSCALER_HOST="your.netscaler.host"
+SSH_USERNAME="your_ssh_username"
+SSH_KEY="/path/to/your/private_key"
+
+# SSH command to execute on NetScaler
+SSH_COMMAND=$(cat <<EOF
+enable
+show clock
+show ntp status
+exit
+EOF
+)
+
+# Execute SSH command and capture output
+SSH_OUTPUT=$(ssh -i "$SSH_KEY" "$SSH_USERNAME@$NETSCALER_HOST" "$SSH_COMMAND" 2>&1)
+
+# Check clock synchronization status
+echo "=== Current Time and Date ==="
+echo "$SSH_OUTPUT" | grep "Current time:"
+echo
+
+echo "=== NTP Synchronization Status ==="
+echo "$SSH_OUTPUT" | grep "Clock synchronized:"
+echo
+
+echo "=== NTP Configuration ==="
+echo "$SSH_OUTPUT" | grep "^server "
+
+
+
+
+Ensure SNMP V3 is enabled, v1 and v2 are disabled
+
+
+#!/bin/bash
+
+# SSH connection details
+NETSCALER_HOST="your.netscaler.host"
+SSH_USERNAME="your_ssh_username"
+SSH_KEY="/path/to/your/private_key"
+
+# SSH command to execute on NetScaler
+SSH_COMMAND=$(cat <<EOF
+enable
+show snmp v3
+show snmp v1
+show snmp v2
+exit
+EOF
+)
+
+# Execute SSH command and capture output
+SSH_OUTPUT=$(ssh -i "$SSH_KEY" "$SSH_USERNAME@$NETSCALER_HOST" "$SSH_COMMAND" 2>&1)
+
+# Check SNMP v3 status
+echo "=== SNMP v3 Configuration ==="
+echo "$SSH_OUTPUT" | grep "Enabled: Yes"
+echo
+
+# Check SNMP v1 status
+echo "=== SNMP v1 Configuration ==="
+echo "$SSH_OUTPUT" | grep "Enabled: No"
+echo
+
+# Check SNMP v2 status
+echo "=== SNMP v2 Configuration ==="
+echo "$SSH_OUTPUT" | grep "Enabled: No"
+
+Ensure SNMP trap listeners are configured
+
+
+
+
+
